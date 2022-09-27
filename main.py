@@ -14,9 +14,9 @@ from tkinter import messagebox
 from os.path import exists
 
 
-def setCalculationValues():
+def setCalculationValues() -> tuple:
     """
-    Open the settings file and extract the saved ration and correction values
+    Open the settings file and extract the saved ratio and correction values
     :return: tuple (ratio, correction)
     """
     with open('settings.txt') as f:
@@ -26,12 +26,12 @@ def setCalculationValues():
     return calculationsValues
 
 
-def updateInfoFromSettings():
+def updateInfoFromSettings() -> None:
     """
     Use the saved values to update the label display of those values in the calculations window
     :return: None
     """
-    # pull in the values set by settings
+    # pull in the values set by settings as tuple
     calculationsValues = setCalculationValues()
     ratio = calculationsValues[0]
     correction = calculationsValues[1]
@@ -40,7 +40,7 @@ def updateInfoFromSettings():
     lblRatio.config(text="1:" + ratio)
 
 
-def calculateClick():
+def calculateClick() -> None:
     """
     Initiate the calculation and display results in a message box
     :return: None
@@ -67,7 +67,7 @@ def calculateClick():
             # Calculate the correction adjustment using the Correction Factor and ADA standard of 110 ml/dL
             unit2 = round((bg - 110) / factor, 2)
             # Combine for total dose recommendation
-            dose = unit1 + unit2
+            dose = round(unit1 + unit2, 2)
             # Display results
             messagebox.showinfo("Dose Calculation", "Base Dose Calculation - " + str(unit1) + "\n"
                                 "Correction Dose Calculation - " + str(unit2) + "\n"
@@ -75,18 +75,19 @@ def calculateClick():
         else:
             # Return error message if blank or wrong value type
             messagebox.showwarning("Invalid Data", "Invalid data entered!\n"
-                                   "Please use only whole numbers for the Carbs and BG ml/dL")
+                                   "Please use only whole numbers for the Carbs and BG ml/dL.\n"
+                                   "Fields cannot be left blank")
 
 
 # Function for Settings window
-def openSettingsWindow():
+def openSettingsWindow() -> None:
     """
     Open the settings window
     :return: None
     """
 
     # Nested function for Save button
-    def settingsSave():
+    def settingsSave() -> None:
         """
         Save the settings to a file
         :return: None
@@ -168,7 +169,7 @@ btn1 = Button(calculator, text="Calculate", command=calculateClick)
 btn2 = Button(calculator, text="Settings", command=openSettingsWindow)
 btn3 = Button(calculator, text="Exit", command=calculator.destroy)
 
-# Images - Impeded to Labels
+# Images - Embedded to Labels
 img = PhotoImage(file="calculator.png")
 img1 = img.subsample(20, 20)
 calcImage = Label(calculator, image=img1, text="Calculator.png")
@@ -190,11 +191,13 @@ btn2.grid(column=3, row=5, sticky=E, pady=3, padx=10)
 btn3.grid(column=3, row=6, sticky=E, pady=3, padx=10)
 calcImage.grid(column=2, row=0, columnspan=2, rowspan=2, padx=(5, 0))
 setImage.grid(column=2, row=3, columnspan=2, rowspan=2, padx=(5, 0))
+
 # Check for an existing Settings file
 hasSettings = exists("settings.txt")
 # Update the label display if there is a settings file
 if hasSettings:
     updateInfoFromSettings()
+# Remind user to create a setting profile
 else:
     messagebox.showwarning("No Settings", "There are not any settings currently in place.\n"
                                           "Use the 'Settings' button to set your ratio and correction values.")
