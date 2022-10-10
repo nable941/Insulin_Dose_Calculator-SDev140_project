@@ -54,11 +54,7 @@ def calculateClick() -> None:
             # If the values entered are not Integers an exception is created
             carbs = int(etrCarbs.get())
             bg = int(etrBG.get())
-        except:
-            # Set dumb values on exception that will trigger a kickout in the next check
-            carbs = 0
-            bg = 0
-        if (carbs > 0) and (bg > 0):
+
             calculationValues = setCalculationValues()
             ratio = int(calculationValues[0])
             factor = int(calculationValues[1])
@@ -72,7 +68,7 @@ def calculateClick() -> None:
             messagebox.showinfo("Dose Calculation", "Base Dose Calculation - " + str(unit1) + "\n"
                                 "Correction Dose Calculation - " + str(unit2) + "\n"
                                 "Total Dose - " + str(dose))
-        else:
+        except ValueError:
             # Return error message if blank or wrong value type
             messagebox.showwarning("Invalid Data", "Invalid data entered!\n"
                                    "Please use only whole numbers for the Carbs and BG ml/dL.\n"
@@ -93,16 +89,10 @@ def openSettingsWindow() -> None:
         :return: None
         """
         try:
-            # If the values entered are not an integer an exception is created
+            # If the values entered are not an integer will cause an exception
             ratio = int(setrRatio.get())
             factor = int(setrFactor.get())
-        except:
-            # Creates dumb values to the exception which will allow the program to continue and still alert the user
-            # to the issue
-            ratio = ""
-            factor = ""
-            # Verify the values entered were an Integer. If they raised an exception the dumb values will fail check
-        if isinstance(ratio, int) and isinstance(factor, int):
+
             # Create/overwrite the settings file
             f = open('settings.txt', 'w')
             f.write(str(ratio) + '\n' + str(factor))
@@ -112,7 +102,7 @@ def openSettingsWindow() -> None:
             settingsWindow.destroy()
             # Update any changes made
             updateInfoFromSettings()
-        else:
+        except ValueError:
             # Create a warning to the user that the data they entered was not valid in some way
             messagebox.showwarning("Not Saved", "Invalid Entry!\n"
                                                 "Please use whole numbers only.\n"
